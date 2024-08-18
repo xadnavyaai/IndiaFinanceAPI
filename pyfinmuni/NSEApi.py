@@ -106,7 +106,7 @@ class NSEApi(AbstractBaseExchange):
             res = self.session.get(url)
             res.raise_for_status()
             data = res.json()
-            return self.render_response(data)
+            return self.render_response(data, False)
         except requests.exceptions.RequestException as e:
             logging.error(f"Error fetching JSON data from URL {url}: {e}")
             return {}
@@ -133,7 +133,8 @@ class NSEApi(AbstractBaseExchange):
                     res_dict[code] = name
         except requests.exceptions.RequestException as e:
             logging.error(f"Error fetching stock codes: {e}")
-        return self.render_response(res_dict, True)
+        
+        return self.render_response(res_dict, False)
 
     def get_historical_data(self, code, from_date, to_date):
         """
@@ -186,7 +187,7 @@ class NSEApi(AbstractBaseExchange):
         :returns: a list | json of index codes
         """
         try:
-            return [i['indexSymbol'] for i in self.get_all_indices()]
+            return [i['indexSymbol'] for i in self.get_all_indices()['data']]
         except Exception as e:
             logging.error(f"Error fetching index list: {e}")
             return []
@@ -198,17 +199,17 @@ class NSEApi(AbstractBaseExchange):
         :returns: dict
         """
         try:
-            all_index_quote = self.get_all_indices()
+            all_index_quote = self.get_all_indices()['data']
             index_list = [i['indexSymbol'] for i in all_index_quote]
             code = code.upper()
             if code in index_list:
                 return list(filter(lambda idx: idx['indexSymbol'] == code, all_index_quote))[0]
             else:
                 logging.error('Wrong index code')
-                return {}
+                return []
         except Exception as e:
             logging.error(f"Error fetching index quote for {code}: {e}")
-            return {}
+            return []
 
     def nse_headers(self):
         """
@@ -222,8 +223,10 @@ class NSEApi(AbstractBaseExchange):
             "X-Requested-With": "XMLHttpRequest"
         }
 
-    def render_response(self, data: dict, as_json=True) -> Union[str, Dict]:
-        return json.dumps(data) if as_json else data
+    def render_response(self, data: dict, as_json_str=True) -> Union[str, Dict]:
+        if as_json_str:
+            return json.dumps(data)
+        return json.loads(data) if isinstance(data, str) else data
 
     def __str__(self) -> str:
         """

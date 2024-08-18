@@ -18,5 +18,10 @@ setup(
         'Programming Language :: Python :: 3',
         'Operating System :: OS Independent',
     ],
+    extras_require={
+        'dev': [
+            'pytest',
+        ],
+    },
     python_requires='>=3.6',
 )
