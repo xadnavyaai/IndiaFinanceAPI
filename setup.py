@@ -18,5 +18,11 @@ setup(
         'Programming Language :: Python :: 3',
         'Operating System :: OS Independent',
     ],
+    extras_require={
+        'dev': [
+            'pytest',
+            'requests-mock'
+        ],
+    },
     python_requires='>=3.6',
 )
