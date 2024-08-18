@@ -101,3 +101,16 @@ if mf.is_valid_fund_code(test_code):
     print(mf.get_mf_price_latest(test_code))
 
 ```
+
+### MF Fund Utils for name matching with ML embeddings
+
+```python3
+os.environ["mf_embeddings_path"] = "<Path to MF name embeddings numpy file!>"
+from pyfinmuni.utils import mf_fund_utils
+
+query_fund_name = "SBI Bluechip Fund"
+top_matches = mf_fund_utils.find_top_fund_matches(query_fund_name)
+
+query_fund_name = "Principal Emerging Bluechip Fund - Growth Option"
+top_matches = mf_fund_utils.find_top_fund_matches(query_fund_name)
+```
