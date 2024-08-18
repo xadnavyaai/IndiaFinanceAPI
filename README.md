@@ -69,3 +69,35 @@ tests/test_IMFApi.py::test_get_mf_price_hist_invalid_code
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 ============================================= 16 passed, 7 warnings in 9.11s ==============================================
 ```
+
+## Usage
+
+### NSEApi
+```python3
+from pyfinmuni import NSEApi
+
+nse = NSEApi()
+print(nse.get_stock_codes())
+print(nse.get_top_gainers())
+print(nse.get_top_losers())
+print(nse.get_all_indices())
+print(nse.get_quote("RELIANCE"))
+print(nse.get_historical_data("RELIANCE", "07-06-2024", "07-07-2024"))
+```
+
+### IndianMFApi
+
+```python3
+from pyfinmuni import IndianMFApi
+
+mfapi = IndianMFApi()
+
+print(mf.mutual_fund_list)
+
+test_code = 152746  # Replace with the fund code you want to test
+
+if mf.is_valid_fund_code(test_code):
+    print(mf.get_mf_price_hist(test_code))
+    print(mf.get_mf_price_latest(test_code))
+
+```

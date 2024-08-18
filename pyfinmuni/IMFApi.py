@@ -5,6 +5,9 @@ from retrying import retry
 from typing import Any, Dict, List
 from functools import lru_cache
 
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
