@@ -3,6 +3,7 @@ import logging
 from requests.exceptions import HTTPError, ConnectionError, Timeout, RequestException
 from retrying import retry
 from typing import Any, Dict, List
+from functools import lru_cache
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -56,6 +57,7 @@ class IndianMFApi:
             logging.error(f"Request error occurred: {req_err}")
             raise
 
+    @lru_cache(maxsize=1)  # Cache the result of this function, since it only changes once a day
     def get_mf_list(self) -> List[Dict[str, Any]]:
         """
         Retrieves the list of all mutual funds.
@@ -78,18 +80,7 @@ class IndianMFApi:
         """
         return {fund['schemeName']: fund['schemeCode'] for fund in fund_list}
 
-    def is_valid_fund_code(self, mf_code: int) -> bool:
-        """
-        Checks if the provided mutual fund code is valid.
-
-        Args:
-            mf_code (int): The mutual fund code to verify.
-
-        Returns:
-            bool: True if the fund code is valid, False otherwise.
-        """
-        return mf_code in self.fund_code_map.values()
-
+    @lru_cache(maxsize=128)  # Cache the result of this function based on mf_code
     def get_mf_price_latest(self, mf_code: int) -> Dict[str, Any]:
         """
         Retrieves the latest price for a specified mutual fund.
@@ -107,6 +98,7 @@ class IndianMFApi:
         url = f"https://api.mfapi.in/mf/{mf_code}/latest"
         return self.__parse_response(url)
     
+    @lru_cache(maxsize=128)  # Cache the result of this function based on mf_code
     def get_mf_price_hist(self, mf_code: int) -> Dict[str, Any]:
         """
         Retrieves the historical price data for a specified mutual fund.
@@ -123,6 +115,18 @@ class IndianMFApi:
         
         url = f"https://api.mfapi.in/mf/{mf_code}"
         return self.__parse_response(url)
+
+    def is_valid_fund_code(self, mf_code: int) -> bool:
+        """
+        Checks if the provided mutual fund code is valid.
+
+        Args:
+            mf_code (int): The mutual fund code to verify.
+
+        Returns:
+            bool: True if the fund code is valid, False otherwise.
+        """
+        return mf_code in self.fund_code_map.values()
 
 if __name__ == "__main__":
     mf = IndianMFApi()

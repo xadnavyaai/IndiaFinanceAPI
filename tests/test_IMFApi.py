@@ -6,6 +6,13 @@ from pyfinmuni import IndianMFApi  # Adjust this import according to your module
 def mf_api():
     return IndianMFApi()
 
+@pytest.fixture(autouse=True)
+def clear_cache_before_tests(mf_api):
+    # Clear the LRU cache before each test to ensure no stale data is used
+    mf_api.get_mf_list.cache_clear()
+    mf_api.get_mf_price_latest.cache_clear()
+    mf_api.get_mf_price_hist.cache_clear()
+
 def test_get_mf_list(mf_api, requests_mock):
     mock_data = [{"schemeName": "Test Fund", "schemeCode": 123456}]
     requests_mock.get("https://api.mfapi.in/mf", json=mock_data)
