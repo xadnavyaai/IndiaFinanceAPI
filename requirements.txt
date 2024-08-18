@@ -1,2 +1,6 @@
 requests
 retrying
+scikit-learn
+numpy
+transformers
+torch @ http://download.pytorch.org/whl/cpu/torch-2.3.1%2Bcpu-cp312-cp312-linux_x86_64.whl#sha256=2141a6cb7021adf2f92a0fd372cfeac524ba460bd39ce3a641d30a561e41f69a
