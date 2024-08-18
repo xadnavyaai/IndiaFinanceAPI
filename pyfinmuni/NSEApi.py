@@ -1,14 +1,62 @@
-import ast
 import re
+import six
+import ast
 import json
 import requests
 import logging
+
+from abc import ABCMeta, abstractmethod
 from typing import Optional, Dict, Union
 from datetime import datetime as dt
-from pyfinmuni.bases import AbstractBaseExchange
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+class AbstractBaseExchange(six.with_metaclass(ABCMeta, object)):
+
+    @abstractmethod
+    def get_stock_codes(self):
+        """
+        :return: list of tuples with stock code and stock name
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def is_valid_code(self, code):
+        """
+        :return: True, if it is a valid stock code, else False
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_quote(self, code):
+        """
+        :param code: a stock code
+        :return: a dictionary which contain detailed stock code.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_top_gainers(self):
+        """
+        :return: a sorted list of codes of top gainers
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_top_losers(self):
+        """
+        :return: a sorted list of codes of top losers
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def __str__(self):
+        """
+        :return: market name
+        """
+        raise NotImplementedError
+
 
 class NSEApi(AbstractBaseExchange):
     """
@@ -185,7 +233,7 @@ class NSEApi(AbstractBaseExchange):
         return 'Driver Class for National Stock Exchange (NSE)'
 
 if __name__ == "__main__":
-    nse = Nse()
+    nse = NSEApi()
     print(nse.get_stock_codes())
     print(nse.get_top_gainers())
     print(nse.get_top_losers())
